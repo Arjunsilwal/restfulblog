@@ -7,6 +7,7 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 mongoose.connect("mongodb://localhost:27017/dataup", {useNewUrlParser: true});
+app.use(express.static(__dirname + '/public'));
 
 //Mongoose/model configuration
 var blogSchema = new mongoose.Schema({
@@ -38,9 +39,20 @@ app.get("/blogs", (req, res) =>{
     }
   })
 });
-
-
-
+//New Route
+app.get("/blogs/new", (req, res) =>{
+  res.render("new");
+})
+//create
+app.post("/blogs", (req, res) =>{
+  Blog.create(req.body.blog, (err, newBlog) =>{
+    if(err){
+      console.log(err);
+    }else{
+        res.redirect("/blogs");
+    }
+  })
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, (req, res) => {
